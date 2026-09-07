@@ -1,0 +1,35 @@
+{
+  "overview": {
+    "precision": 0.837,
+    "recall": 0.222,
+    "kappa": 0.802,
+    "n_labeled_set": 1000,
+    "n_random_set": 1000,
+    "agreement_count": 1827,
+    "agreement_pct": 91.35,
+    "labeled_flagged_pct": 100.0,
+    "labeled_unsafe_pct": 83.7,
+    "random_flagged_pct": 0.6,
+    "random_unsafe_pct": 2.7,
+    "recall_automated": 0.6,
+    "recall_manual": 0.0,
+    "random_unsafe_n": 27,
+    "random_caught_n": 6,
+    "automated_unsafe_n": 10,
+    "automated_caught_n": 6
+  },
+  "table4": [
+    {"group": "Automated Labels", "label": "porn",              "n": 111, "precision": 1.000, "n_root": 102, "p_root": 1.000, "n_reply": 9,   "p_reply": 1.000},
+    {"group": "Automated Labels", "label": "sexual",            "n": 111, "precision": 0.856, "n_root": 95,  "p_root": 0.884, "n_reply": 16,  "p_reply": 0.688},
+    {"group": "Automated Labels", "label": "nudity",            "n": 111, "precision": 0.937, "n_root": 100, "p_root": 0.940, "n_reply": 11,  "p_reply": 0.909},
+    {"group": "Automated Labels", "label": "self-harm",         "n": 111, "precision": 0.919, "n_root": 99,  "p_root": 0.939, "n_reply": 12,  "p_reply": 0.750},
+    {"group": "Automated Labels", "label": "graphic-media",     "n": 111, "precision": 0.802, "n_root": 86,  "p_root": 0.814, "n_reply": 25,  "p_reply": 0.760},
+    {"group": "Automated Labels", "label": "Total",             "n": 555, "precision": 0.903, "n_root": 482, "p_root": 0.919, "n_reply": 73,  "p_reply": 0.795, "is_total": true},
+    {"group": "Manual Labels", "label": "intolerant",           "n": 111, "precision": 0.667, "n_root": 23,  "p_root": 0.609, "n_reply": 88,  "p_reply": 0.682},
+    {"group": "Manual Labels", "label": "rude",                 "n": 112, "precision": 0.509, "n_root": 3,   "p_root": 0.667, "n_reply": 109, "p_reply": 0.505},
+    {"group": "Manual Labels", "label": "threat",               "n": 111, "precision": 0.892, "n_root": 16,  "p_root": 0.812, "n_reply": 95,  "p_reply": 0.905},
+    {"group": "Manual Labels", "label": "sexual-figurative",    "n": 111, "precision": 0.955, "n_root": 104, "p_root": 0.952, "n_reply": 7,   "p_reply": 1.000},
+    {"group": "Manual Labels", "label": "Total",                "n": 445, "precision": 0.755, "n_root": 146, "p_root": 0.877, "n_reply": 299, "p_reply": 0.696, "is_total": true},
+    {"group": "Overall", "label": "Overall",                    "n": 1000,"precision": 0.837, "n_root": 628, "p_root": 0.909, "n_reply": 372, "p_reply": 0.715, "is_total": true}
+  ]
+}

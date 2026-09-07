@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="An interactive companion to the ICWSM paper auditing the Bluesky Moderation Service: 10.6M labels, automation vs. human oversight, precision/recall, and the landscape of detected harms.">
+<meta name="keywords" content="Bluesky, content moderation, trust and safety, AT Protocol, ICWSM">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Characterizing Bluesky Content Moderation Service</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦋</text></svg>">
+
+<link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.2/css/bulma.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="container">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#"><b>BMS Audit</b></a>
+      <a role="button" class="navbar-burger" id="navBurger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div class="navbar-menu" id="navMenu">
+      <div class="navbar-start" style="margin-left:auto">
+        <a class="navbar-item" href="#overview">Overview</a>
+        <a class="navbar-item" href="#rq1">Automation</a>
+        <a class="navbar-item" href="#rq2">Efficacy</a>
+        <a class="navbar-item" href="#hive">Blindspots</a>
+        <a class="navbar-item" href="#rq3">Harms</a>
+        <a class="navbar-item" href="#data">Data &amp; Code</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Characterizing Bluesky Content Moderation Service</h1>
+          <h2 class="subtitle is-4" style="margin-top:1rem">From automation of service to the landscape of harms it detects</h2>
+
+          <div class="column has-text-centered" style="padding-top:1.5rem">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-database"></i></span>
+                  <span>Data &amp; Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#BibTeX" class="button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-quote-right"></i></span>
+                  <span>BibTeX</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser is-light" id="overview">
+  <div class="container is-max-desktop">
+    <div class="hero-body teaser-band">
+      <div class="statgrid" id="overview-stats"></div>
+      <h2 class="subtitle has-text-centered" style="margin-top:1.5rem">
+        The first large-scale audit of Bluesky's default labeler, built from
+        <b>10.6M real moderation labels</b> streamed publicly over <a href="https://docs.bsky.app/docs/advanced-guides/moderation" target="_blank" rel="noopener">AT Protocol</a> in 2025.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Empirical research on content moderation is fundamentally constrained by the opaque deployment of moderation systems on major social media platforms. To this end, the recent emergence of decentralized platforms with transparent, public moderation logs presents an unprecedented opportunity for independent audits. In this work, we leverage this architectural transparency to conduct the first large-scale audit of the default moderation system on Bluesky, the <b>Bluesky Moderation Service (BMS)</b>. Analyzing its 10.6M moderation labels from 2025, we investigate three foundational aspects: (i) its <b>mechanism</b> (the degree of automation versus human oversight), (ii) its <b>efficacy</b> (accuracy in detecting harms), and (iii) its <b>purpose</b> (the landscape of harms it identifies).
+          </p>
+          <p>
+            Our findings reveal a human-AI collaborative system where labels for sexual and graphic content are applied automatically in seconds, while nuanced and high-stakes labels require more human oversight, taking hours or days. Through a manual annotation study, we find the BMS operates with high precision (0.837), but struggles with low recall (0.222), with our annotators identifying 4.5&times; more harmful content than the moderation system in a random sample. Finally, unsupervised clustering of the most frequently applied labeled posts uncovers detected harms ranging from hostility in discourse toward protected groups to the spread of sexually explicit and other graphic content.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="rq1">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <p class="eyebrow">RQ1 &middot; Mechanism</p>
+        <h2 class="title is-3">How much of BMS is automated?</h2>
+        <div class="content has-text-justified">
+          <p>We use <b>labeling delay</b> &mdash; the time between a post's creation and its label &mdash; as an empirical proxy for automation: labels applied within seconds, at scale, are likely automated; labels taking hours or days indicate human review. This is computed directly from BMS's 2025 label stream (10.46M valid records).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="box">
+          <p class="chart-title">Median labeling delay vs. number of posts labeled</p>
+          <p class="chart-note">Each point is one label. Both axes log-scaled. Hover for exact percentiles. Color = automated (teal) vs. human-oversight (rose), split by the delay dichotomy we observe.</p>
+          <div id="chart-1a" class="plot" style="height:460px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered" style="margin-top:.5rem">
+      <div class="column">
+        <div class="box">
+          <p class="chart-title">Automated labels: CDF of delay by embed type</p>
+          <p class="chart-note">porn, sexual, nudity, self-harm, graphic-media, spam, !warn, !hide.</p>
+          <div id="chart-1b" class="plot" style="height:380px"></div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box">
+          <p class="chart-title">Human-oversight labels: CDF of delay by embed type</p>
+          <p class="chart-note">intolerant, rude, threat, sexual-figurative, !takedown.</p>
+          <div id="chart-1c" class="plot" style="height:380px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <article class="message is-link">
+          <div class="message-body">
+            <b>Validation against Bluesky's own transparency report.</b> Bluesky's 2025 Transparency Report confirms <code>rude</code>, <code>intolerant</code>, and <code>threat</code> as manually applied, and reports manual&#8209;application rates for <code>self-harm</code> (8%) and <code>nudity</code> (18%) that line up with our observed multi-day 95th-percentile delays for those labels.
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="box">
+          <p class="chart-title">Redressal latency: delay until a label is negated/reversed</p>
+          <p class="chart-note">Median time between post creation and label removal, for the 206,724 negated labels we observed.</p>
+          <div id="chart-6a" class="plot" style="height:380px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light" id="rq2">
+  <div class="hero-body">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <p class="eyebrow">RQ2 &middot; Efficacy</p>
+        <h2 class="title is-3">Precision and recall of the BMS</h2>
+        <div class="content has-text-justified">
+          <p>Annotators independently labeled 1,000 BMS-flagged posts (<b>labeled set</b>, for precision) and 1,000 random firehose posts (<b>random set</b>, for recall).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered is-vcentered">
+      <div class="column">
+        <div class="box">
+          <p class="chart-title">Unsafe content: labeled set vs. random firehose set</p>
+          <div id="chart-pr" class="plot" style="height:380px"></div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="content">
+          <p><b>Precision 0.837</b> &mdash; of posts BMS flags, 83.7% are genuinely unsafe by human judgment. In the random firehose sample, every post BMS flagged (6/6) was confirmed unsafe (100% precision there too).</p>
+          <p><b>Recall 0.222</b> &mdash; of the 27 unsafe posts human annotators found in a random 1,000-post sample, BMS caught only 6. Automated-label recall is 0.600; recall for manually-applied labels in this sample is <b>0</b> &mdash; moderators only review reported/surfaced content.</p>
+          <p>&rarr; Annotators found <b>4.5&times;</b> more harmful content than BMS flagged, in a random, unbiased sample of the firehose.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</section>
+
+<section class="section" id="hive">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <p class="eyebrow">RQ2, continued &middot; Blindspots</p>
+        <h2 class="title is-3">Why does the automated pipeline miss content?</h2>
+        <div class="content has-text-justified">
+          <p>BMS's automated pipeline calls <b>Hive AI</b> (128 classes across 54 heads) for every image, then <b>Automod</b> &mdash; Bluesky's open-source rule engine &mdash; applies hard-coded thresholds to just 16 of those classes. We matched 336 BMS-labeled posts to their nearest unlabeled neighbor in a 40M-post firehose sample (Qwen3-VL-Embedding-2B + faiss) to probe what the pipeline misses.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered is-vcentered">
+      <div class="column">
+        <div class="box has-text-centered">
+          <p class="eyebrow">Step 1</p>
+          <p class="title is-6">Hive AI</p>
+          <p class="content is-size-7">Returns 128 class-score pairs (54 heads) per image, e.g. <code>yes_sexual_activity: 0.91</code>.</p>
+        </div>
+      </div>
+      <div class="column is-narrow pipeline-arrow"><i class="fas fa-arrow-right"></i></div>
+      <div class="column">
+        <div class="box has-text-centered">
+          <p class="eyebrow">Step 2</p>
+          <p class="title is-6">Automod rules</p>
+          <p class="content is-size-7">Hard-coded thresholds on 16 of 128 classes, e.g. <code>yes_self_harm &ge; 0.96</code> &rarr; <code>self-harm</code>.</p>
+        </div>
+      </div>
+      <div class="column is-narrow pipeline-arrow"><i class="fas fa-arrow-right"></i></div>
+      <div class="column">
+        <div class="box has-text-centered">
+          <p class="eyebrow">Step 3</p>
+          <p class="title is-6">BMS label</p>
+          <p class="content is-size-7">Priority cascade for sexual content: <code>porn</code> &rarr; <code>sexual</code> &rarr; <code>nudity</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="statgrid" id="hive-stats" style="margin:1.5rem 0"></div>
+
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <article class="message is-link">
+          <div class="message-body" id="hive-recall-box"></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="box">
+          <p class="chart-title">H1: close threshold misses</p>
+          <p class="chart-note">Hive scores on Automod-mapped heads for the 22 missed posts, sorted by median gap to threshold (red marker). Real per-post scores.</p>
+          <div id="chart-h1" class="plot" style="height:420px"></div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box">
+          <p class="chart-title">H2: rule-set gap</p>
+          <p class="chart-note">Hive scores on heads Automod never reads, for the 14 missed posts. Automod takes no action despite near-perfect scores.</p>
+          <div id="chart-h2" class="plot" style="height:420px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light" id="rq3">
+  <div class="hero-body">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <p class="eyebrow">RQ3 &middot; Purpose</p>
+        <h2 class="title is-3">The landscape of harms</h2>
+        <div class="content has-text-justified">
+          <p>For each label, posts are embedded with <code>Qwen3-VL-Embedding-2B</code> (text + media jointly), projected to 5D with UMAP, and clustered with HDBSCAN (hyperparameters tuned per label via Optuna/TPE, selected by DBCV score). Clusters are named by a vision-language model (<code>Qwen3-VL-32B-Instruct</code>) given sampled posts, validated by three human annotators (92.5% rated appropriate/very appropriate, Krippendorff's &alpha; = 0.686). Points below are the <b>first two UMAP components</b> for a downsampled set of real posts per cluster.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="tabs is-toggle is-toggle-rounded is-small label-tabs">
+          <ul id="cluster-tags"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="box">
+          <p class="chart-title" id="cluster-title">Clusters within a label</p>
+          <p class="chart-note" id="cluster-note"></p>
+          <!-- js/charts.js inserts the full-width, horizontally-wrapping cluster
+               legend right here (after #cluster-note), spanning the whole box. -->
+          <div class="cluster-panel">
+            <div class="cluster-panel-chart">
+              <div id="chart-clusters" class="plot" style="height:560px"></div>
+            </div>
+            <div class="cluster-panel-detail" id="cluster-detail-box">
+              <p class="chart-note">Click a cluster &mdash; in the chart or the legend above &mdash; for details.</p>
+              <h3 class="title is-5" id="cluster-detail-name">&nbsp;</h3>
+              <p class="chart-note" id="cluster-detail-stats"></p>
+              <p class="content is-size-7" id="cluster-detail-summary"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered" style="margin-top:1rem">
+      <div class="column">
+        <h3 class="title is-5">Harms to protected groups &amp; civic discourse</h3>
+        <p class="content">&nbsp;<code>intolerant</code>, <code>rude</code>, <code>threat</code> surface gender/LGBTQ+, religious, racial and political targeting &mdash; from slurs to explicit death wishes directed at political figures.</p>
+      </div>
+      <div class="column">
+        <h3 class="title is-5">Harms to physical &amp; mental well-being</h3>
+        <p class="content"><code>graphic-media</code> and <code>self-harm</code> capture war/atrocity imagery, historical execution photos repurposed politically, and cutting/self-injury content, often under hashtags like #sh.</p>
+      </div>
+      <div class="column">
+        <h3 class="title is-5">Harms to minors from sexual content</h3>
+        <p class="content">Four labels &mdash; <code>porn</code>, <code>sexual</code>, <code>nudity</code>, <code>sexual-figurative</code> &mdash; span a spectrum from commercial adult content to fine-art nudity to stylized/anime erotica.</p>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="section" id="data">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <p class="eyebrow">Reproducibility</p>
+        <h2 class="title is-3">Data &amp; code</h2>
+        <div class="content">
+          <p>Code and data will be made publicly available soon.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light" id="team">
+  <div class="hero-body">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Team</h2>
+      </div>
+    </div>
+    <div class="columns is-multiline is-centered">
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-6" style="margin-bottom:6px">Pushpdeep Singh</p>
+          <p class="content is-size-7">MPI-SWS<br>Germany</p>
+          <p class="is-size-7"><a href="https://sites.google.com/view/pushpdeep" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a></p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-6" style="margin-bottom:6px">Sayeh Jarollahi</p>
+          <p class="content is-size-7">Saarland University<br>Germany</p>
+          <p class="is-size-7"><a href="https://www.linkedin.com/in/sayeh-jarollahi-62b01a38b/" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a></p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-6" style="margin-bottom:6px">Ayan Majumdar</p>
+          <p class="content is-size-7">MPI-SWS<br>Germany</p>
+          <p class="is-size-7"><a href="https://ayanmaj.netlify.app/" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a></p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-6" style="margin-bottom:6px">Vabuk Pahari</p>
+          <p class="content is-size-7">MPI-SWS<br>Germany</p>
+          <p class="is-size-7"><a href="https://vpahari.github.io/" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a></p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-6" style="margin-bottom:6px">Abhijnan Chakraborty</p>
+          <p class="content is-size-7">IIT Kharagpur<br>India</p>
+          <p class="is-size-7"><a href="https://cse.iitkgp.ac.in/~abhijnan/" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a></p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-6" style="margin-bottom:6px">Abhisek Dash</p>
+          <p class="content is-size-7">MPI-SWS<br>Germany</p>
+          <p class="is-size-7"><a href="https://sites.google.com/site/abhisek0193" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a></p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-6" style="margin-bottom:6px">Krishna P. Gummadi</p>
+          <p class="content is-size-7">MPI-SWS<br>Germany</p>
+          <p class="is-size-7"><a href="https://people.mpi-sws.org/~gummadi/" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a></p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-6" style="margin-bottom:6px">Ingmar Weber</p>
+          <p class="content is-size-7">Saarland University<br>Germany</p>
+          <p class="is-size-7"><a href="https://ingmarweber.de/" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered" style="margin-top:1.5rem">
+      <div class="column is-four-fifths">
+        <p class="eyebrow" style="margin-bottom:.6rem">Contact</p>
+        <div class="box" style="display:inline-block">
+          <p class="title is-6" style="margin-bottom:4px">Pushpdeep Singh</p>
+          <p class="is-size-7"><a href="mailto:psingh@mpi-sws.org">psingh@mpi-sws.org</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <div class="bibtex-wrap">
+      <button class="button is-small copybtn" id="copybib">Copy</button>
+      <pre><code id="bibtex-text">@article{singh2026characterizing,
+    author={Singh, Pushpdeep and Jarollahi, Sayeh and Majumdar, Ayan and Pahari, Vabuk and Chakraborty, Abhijnan and Gummadi, {Krishna Phani} and Weber, Ingmar and Dash, Abhisek},
+    title = {Proceedings of the International AAAI Conference on Web and Social Media},
+    journal = {arXiv preprint},
+    year = {2026}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="paper.pdf"><i class="fas fa-file-pdf"></i></a>
+      <a class="icon-link" href="#data"><i class="fas fa-database"></i></a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>Data sourced from Bluesky's public <code>com.atproto.label.subscribeLabels</code> stream, 2025. No non-public account data or direct user interaction was used. See the paper's Ethical Considerations section.</p>
+          <p class="is-size-7" style="color:var(--muted)">Page template adapted from the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies project page</a>, licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0 License</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

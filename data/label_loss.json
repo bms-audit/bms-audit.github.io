@@ -1,0 +1,132 @@
+[
+ {
+  "label": "porn",
+  "total": 7475644,
+  "valid": 7198690,
+  "neg": 114816,
+  "ca_out": 15650,
+  "cts_out": 0,
+  "cts_lt": 146488,
+  "no_ts": 0
+ },
+ {
+  "label": "sexual",
+  "total": 2315637,
+  "valid": 2200976,
+  "neg": 72044,
+  "ca_out": 4366,
+  "cts_out": 0,
+  "cts_lt": 38251,
+  "no_ts": 0
+ },
+ {
+  "label": "nudity",
+  "total": 277182,
+  "valid": 267334,
+  "neg": 5936,
+  "ca_out": 969,
+  "cts_out": 0,
+  "cts_lt": 2943,
+  "no_ts": 0
+ },
+ {
+  "label": "rude",
+  "total": 220965,
+  "valid": 219557,
+  "neg": 1253,
+  "ca_out": 108,
+  "cts_out": 0,
+  "cts_lt": 47,
+  "no_ts": 0
+ },
+ {
+  "label": "!takedown",
+  "total": 215574,
+  "valid": 213677,
+  "neg": 1495,
+  "ca_out": 253,
+  "cts_out": 0,
+  "cts_lt": 149,
+  "no_ts": 0
+ },
+ {
+  "label": "sexual-figurative",
+  "total": 136055,
+  "valid": 131891,
+  "neg": 1113,
+  "ca_out": 3020,
+  "cts_out": 0,
+  "cts_lt": 31,
+  "no_ts": 0
+ },
+ {
+  "label": "graphic-media",
+  "total": 98536,
+  "valid": 91832,
+  "neg": 4748,
+  "ca_out": 247,
+  "cts_out": 0,
+  "cts_lt": 1709,
+  "no_ts": 0
+ },
+ {
+  "label": "spam",
+  "total": 80566,
+  "valid": 74984,
+  "neg": 2489,
+  "ca_out": 1,
+  "cts_out": 0,
+  "cts_lt": 3092,
+  "no_ts": 0
+ },
+ {
+  "label": "intolerant",
+  "total": 38409,
+  "valid": 37894,
+  "neg": 388,
+  "ca_out": 127,
+  "cts_out": 0,
+  "cts_lt": 0,
+  "no_ts": 0
+ },
+ {
+  "label": "threat",
+  "total": 11763,
+  "valid": 11601,
+  "neg": 123,
+  "ca_out": 38,
+  "cts_out": 0,
+  "cts_lt": 1,
+  "no_ts": 0
+ },
+ {
+  "label": "self-harm",
+  "total": 11317,
+  "valid": 9972,
+  "neg": 1130,
+  "ca_out": 27,
+  "cts_out": 0,
+  "cts_lt": 188,
+  "no_ts": 0
+ },
+ {
+  "label": "!hide",
+  "total": 7926,
+  "valid": 3294,
+  "neg": 4406,
+  "ca_out": 19,
+  "cts_out": 0,
+  "cts_lt": 207,
+  "no_ts": 0
+ },
+ {
+  "label": "!warn",
+  "total": 3001,
+  "valid": 2164,
+  "neg": 810,
+  "ca_out": 4,
+  "cts_out": 0,
+  "cts_lt": 23,
+  "no_ts": 0
+ }
+]

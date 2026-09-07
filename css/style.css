@@ -1,0 +1,195 @@
+/* Palette follows the nerfies.github.io template: white background, Noto Sans body,
+   Bulma's default link blue for chrome. Data-series colors (teal/rose/categorical
+   cluster palette) are our own, layered on top for the charts. */
+:root {
+  --bg: #ffffff;
+  --bg-light: #f5f5f5;
+  --ink: #363636;
+  --body-text: #4a4a4a;
+  --muted: #7a7a7a;
+  --border: #ededed;
+  --link: #3273dc;
+  --accent: #3273dc;
+  --accent2: #d1476b;
+  --accent3: #0d8f8f;
+  --warn: #dc2626;
+  --code-bg: #f5f5f5;
+
+  /* aliases consumed by js/theme.js so chart colors track the palette above */
+  --text: var(--ink);
+  --text-dim: var(--body-text);
+  --text-faint: var(--muted);
+  --bg-card: var(--bg);
+}
+
+html { color-scheme: light; }
+
+@media (prefers-color-scheme: dark) {
+  /* Pin Bulma 1.x's automatic dark-mode variables back to their light values.
+     Bulma ships its own prefers-color-scheme:dark override that only reaches
+     Bulma-native components (navbar/box/button/table chrome), while our own
+     :root palette above and the Plotly chart theme stay fixed light — so an
+     OS/browser dark mode previously produced a half-dark, half-light page.
+     This page intentionally has one light theme (matching the nerfies
+     template), so we neutralize Bulma's shift instead of building a second
+     parallel dark theme. */
+  :root {
+    --bulma-white-on-scheme-l: 35%;
+    --bulma-white-on-scheme: hsla(var(--bulma-white-h),var(--bulma-white-s),var(--bulma-white-on-scheme-l),1);
+    --bulma-black-on-scheme-l: 4%;
+    --bulma-black-on-scheme: hsla(var(--bulma-black-h),var(--bulma-black-s),var(--bulma-black-on-scheme-l),1);
+    --bulma-light-on-scheme-l: 36%;
+    --bulma-light-on-scheme: hsla(var(--bulma-light-h),var(--bulma-light-s),var(--bulma-light-on-scheme-l),1);
+    --bulma-dark-on-scheme-l: 21%;
+    --bulma-dark-on-scheme: hsla(var(--bulma-dark-h),var(--bulma-dark-s),var(--bulma-dark-on-scheme-l),1);
+    --bulma-text-on-scheme-l: 29%;
+    --bulma-text-on-scheme: hsla(var(--bulma-text-h),var(--bulma-text-s),var(--bulma-text-on-scheme-l),1);
+    --bulma-primary-on-scheme-l: 21%;
+    --bulma-primary-on-scheme: hsla(var(--bulma-primary-h),var(--bulma-primary-s),var(--bulma-primary-on-scheme-l),1);
+    --bulma-link-on-scheme-l: 58%;
+    --bulma-link-on-scheme: hsla(var(--bulma-link-h),var(--bulma-link-s),var(--bulma-link-on-scheme-l),1);
+    --bulma-info-on-scheme-l: 25%;
+    --bulma-info-on-scheme: hsla(var(--bulma-info-h),var(--bulma-info-s),var(--bulma-info-on-scheme-l),1);
+    --bulma-success-on-scheme-l: 23%;
+    --bulma-success-on-scheme: hsla(var(--bulma-success-h),var(--bulma-success-s),var(--bulma-success-on-scheme-l),1);
+    --bulma-warning-on-scheme-l: 23%;
+    --bulma-warning-on-scheme: hsla(var(--bulma-warning-h),var(--bulma-warning-s),var(--bulma-warning-on-scheme-l),1);
+    --bulma-danger-on-scheme-l: 40%;
+    --bulma-danger-on-scheme: hsla(var(--bulma-danger-h),var(--bulma-danger-s),var(--bulma-danger-on-scheme-l),1);
+    --bulma-scheme-brightness: light;
+    --bulma-scheme-main-l: 100%;
+    --bulma-scheme-main-bis-l: 98%;
+    --bulma-scheme-main-ter-l: 96%;
+    --bulma-soft-l: 90%;
+    --bulma-bold-l: 20%;
+    --bulma-soft-invert-l: 20%;
+    --bulma-bold-invert-l: 90%;
+    --bulma-background-l: 96%;
+    --bulma-border-weak-l: 93%;
+    --bulma-border-l: 86%;
+    --bulma-text-weak-l: 48%;
+    --bulma-text-l: 29%;
+    --bulma-text-strong-l: 21%;
+    --bulma-text-title-l: 14%;
+    --bulma-hover-background-l-delta: -5%;
+    --bulma-active-background-l-delta: -10%;
+    --bulma-hover-border-l-delta: -10%;
+    --bulma-active-border-l-delta: -20%;
+    --bulma-hover-color-l-delta: -5%;
+    --bulma-active-color-l-delta: -10%;
+    --bulma-shadow-h: 221deg;
+    --bulma-shadow-s: 14%;
+    --bulma-shadow-l: 4%;
+  }
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  color: var(--body-text);
+}
+
+code, .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+code { background: var(--code-bg); padding: .12em .4em; border-radius: 4px; font-size: .88em; }
+
+.publication-title, .publication-authors, .navbar-brand .navbar-item b {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+}
+.publication-authors a { color: var(--link) !important; }
+.publication-authors a:hover { text-decoration: underline; }
+.author-block { display: inline-block; }
+.publication-links .link-block a { margin: 4px 6px; }
+
+/* ---------------- navbar ---------------- */
+.navbar { border-bottom: 1px solid var(--border); }
+/* Override Bulma's default solid-blue-fill active state with a plain text +
+   underline treatment, consistent with the rest of the page's restrained palette. */
+#navMenu a.navbar-item.is-active,
+#navMenu a.navbar-item.is-active:hover,
+#navMenu a.navbar-item:focus {
+  background-color: transparent;
+  color: var(--link);
+  font-weight: 600;
+}
+#navMenu a.navbar-item.is-active { box-shadow: inset 0 -2px 0 var(--link); }
+
+/* ---------------- teaser stat band ---------------- */
+.teaser-band { padding: 2.5rem 0 3rem; }
+.statgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.4rem 1.5rem; max-width: 880px; margin: 0 auto; }
+.statgrid .stat { padding: 6px 10px; }
+.stat .num { font-family: 'Google Sans', sans-serif; font-size: 2rem; font-weight: 700; color: var(--link); line-height: 1.1; }
+.stat .lbl { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+
+/* ---------------- section chrome ---------------- */
+/* Plain bold/gray label, following nerfies' .publication-venue convention —
+   deliberately not uppercase/letter-spaced, which reads as generic template chrome. */
+.eyebrow { font-size: .95rem; font-weight: 700; color: var(--muted); margin-bottom: .4rem; }
+section.section { scroll-margin-top: 60px; }
+section.hero { scroll-margin-top: 60px; }
+
+.chart-title { font-weight: 700; font-size: 1.02rem; color: var(--ink); margin-bottom: 2px; }
+.chart-note { color: var(--muted); font-size: .85rem; margin-bottom: 12px; }
+.plot { width: 100%; }
+/* Belt-and-braces bold axis/legend text: Plotly's font.weight support on
+   tick/legend text varies by trace type, so reinforce it directly on the
+   rendered SVG text nodes it emits. */
+.plot .xtick text, .plot .ytick text,
+.plot .g-xtitle text, .plot .g-ytitle text,
+.plot .legendtext {
+  font-weight: 700 !important;
+}
+/* In-plot data labels (e.g. the "porn"/"threat"/etc. callouts on Figure 1a)
+   sit directly on top of gridlines and markers, so give them a white halo —
+   otherwise they blend into whatever they cross. */
+.plot .textpoint text {
+  paint-order: stroke fill;
+  stroke: #ffffff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* ---------------- pipeline steps (hive) ---------------- */
+.pipeline-arrow { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 1.3rem; }
+@media (max-width: 768px) { .pipeline-arrow { transform: rotate(90deg); padding: 6px 0; } }
+
+/* ---------------- cluster legend ---------------- */
+.clusterlegend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .82rem; margin-top: 12px; }
+.clusterlegend .li { display: flex; align-items: center; gap: 6px; color: var(--body-text); cursor: pointer; padding: 2px 4px; border-radius: 4px; }
+.clusterlegend .li:hover { background: var(--bg-light); }
+.clusterlegend .li.active { background: var(--bg-light); font-weight: 700; }
+.clusterlegend .sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+
+/* ---------------- cluster detail side panel ---------------- */
+.cluster-panel { display: flex; gap: 24px; margin-top: 16px; align-items: stretch; }
+.cluster-panel-chart { flex: 2 1 0; min-width: 0; }
+.cluster-panel-detail {
+  flex: 1 1 260px; min-width: 240px; max-width: 340px;
+  border-left: 1px solid var(--border); padding-left: 22px;
+  max-height: 560px; overflow-y: auto;
+}
+.cluster-panel-detail #cluster-detail-name { margin-top: 6px; }
+.cluster-panel-detail #cluster-detail-summary { color: var(--body-text); line-height: 1.6; }
+@media (max-width: 860px) {
+  .cluster-panel { flex-direction: column; }
+  .cluster-panel-detail { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 18px; max-width: none; max-height: none; }
+}
+
+/* label-switch tabs: native Bulma .tabs is horizontally scrollable already.
+   Bulma columns are flex items, and a flex item won't shrink below its content's
+   min-content width unless told to — without this, the wide (14-item, non-wrapping)
+   tab row forces the whole column (and the chart box under it) to stay as wide as
+   the tabs, ignoring the viewport, instead of letting .tabs scroll internally. */
+.columns > .column { min-width: 0; }
+.tabs.label-tabs ul { border-bottom-color: var(--border); }
+.tabs.label-tabs a { font-family: 'JetBrains Mono', monospace; font-size: .82rem; }
+
+/* ---------------- tables ---------------- */
+table.datatable th, table.datatable td { text-align: right; white-space: nowrap; }
+table.datatable th:first-child, table.datatable td:first-child { text-align: left; white-space: normal; }
+table.datatable .group-row td { color: var(--muted); font-size: .8rem; font-weight: 700; border-bottom: none; padding-top: 18px; }
+
+/* ---------------- bibtex ---------------- */
+.bibtex-wrap { position: relative; }
+.bibtex-wrap .copybtn { position: absolute; top: 8px; right: 8px; }
+#BibTeX pre { background: var(--code-bg); overflow-x: auto; max-width: 100%; }
+
+.footer .icon-link { font-size: 22px; color: var(--ink); margin: 0 10px; }
